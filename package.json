@@ -1,0 +1,13 @@
+{
+  "name": "smb1-proxy",
+  "version": "1.0.0",
+  "main": "file-sync.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dave Jensen",
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^4.0.3"
+  }
+}

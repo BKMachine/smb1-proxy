@@ -6,6 +6,9 @@ linuxUserId = os.getenv('USERID')
 linuxGroupId = os.getenv('GROUPID')
 sambaUsername = os.getenv('SAMBA_USERNAME')
 sambaPassword = os.getenv('SAMBA_PASSWORD')
+remoteDomain = os.getenv('REMOTE_DOMAIN')
+remoteUsername = os.getenv('REMOTE_USERNAME')
+remotePassword = os.getenv('REMOTE_PASSWORD')
 
 totalProxyCount = 0
 enabledProxyCount = 0
@@ -25,9 +28,6 @@ while True:
   shareName = os.getenv('PROXY{}_SHARE_NAME'.format(i))
   shareDirectory = '/share{}'.format(i)
   remotePath = os.getenv('PROXY{}_REMOTE_PATH'.format(i))
-  remoteDomain = os.getenv('PROXY{}_REMOTE_DOMAIN'.format(i))
-  remoteUsername = os.getenv('PROXY{}_REMOTE_USERNAME'.format(i))
-  remotePassword = os.getenv('PROXY{}_REMOTE_PASSWORD'.format(i))
   remoteMount = '/remote{}'.format(i)
 
   # SMB Mount
@@ -65,6 +65,13 @@ while True:
     os.mkdir(shareDirectory)
   subprocess.call("chown {}:{} {}".format(linuxUserId, linuxGroupId, shareDirectory), shell=True)
   os.environ['SHARE{}'.format(i)] = "{};{};yes;no;no;{}".format(shareName, shareDirectory, sambaUsername)
+  
+  # Rsync clone the remote to the share folder
+  print("Cloning remote share to local share directory")
+  subprocess.call("rsync -av --delete {remote}/ {local}".format(
+    remote = remoteMount,
+    local = shareDirectory
+  ), shell=True)
 
 print("{}/{} enabled Proxies.".format(enabledProxyCount, totalProxyCount))
 if enabledProxyCount == 0:
